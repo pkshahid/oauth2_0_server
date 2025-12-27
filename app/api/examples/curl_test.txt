@@ -1,0 +1,41 @@
+CLIENT_ID: example_client
+CLIENT_SECRET: fmA8akqay2mSL3BKGOZ8jChXK9UJELstwM9ASS_3eXQ
+
+
+curl -i -X POST http://127.0.0.1:8000/api/v1/sso/login \
+  -d "email=test@example.com" \
+  -d "password=password123" \
+  -c cookies.txt
+
+
+curl -i -b cookies.txt \
+"http://127.0.0.1:8000/api/v1/oauth/authorize?response_type=code&client_id=example_client&redirect_uri=https://app.example.com/callback&scope=read%20write&state=xyz"
+
+
+
+curl -i -X POST http://127.0.0.1:8000/api/v1/oauth/token \
+  -d "grant_type=authorization_code" \
+  -d "client_id=example_client" \
+  -d "client_secret=fmA8akqay2mSL3BKGOZ8jChXK9UJELstwM9ASS_3eXQ" \
+  -d "code=HqdnDp2OoPrioRZt7fQdaidOmUlyXbfNbU_STYIpsJY" \
+  -d "redirect_uri=https://app.example.com/callback"
+
+
+curl -i http://127.0.0.1:8000/api/v1/userinfo/me \
+  -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzNGE0OGVkYi0wZDg3LTRlZjMtODk1YS00N2M4ODExOWQyYWMiLCJzaWQiOiI3OTM2ODM5Ny04NjJmLTQ0ZTctOWIzNC1lYzMzZDkwMTI0ZWMiLCJhdWQiOiJleGFtcGxlX2NsaWVudCIsInNjb3BlIjoicmVhZCB3cml0ZSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCIsImlhdCI6MTc2NjgwMDg2NywiZXhwIjoxNzY2ODAxNzY3fQ.a0CK5DB0LGXccBBrc64WGCmh_crQ8qh8lJJ3giaAotXJ5ha3KTHh2a1HfURtOSARs8WTmMDYw6ok_qC03VR330N1mLyDbovXw--skFci4NRbNJLDDlg5fLoSYLFdYDwKzbB8MjBLQb71SSZKhLuJ4lHZPaW2nRE2Mb6Mea6-iwiZ-2z1f4sE-iE9q-tznTbtxGqs6JTietzTSdpCx8TkTwFjVd2xH1lf57lt4eqz2cPFV5aWWkJ_2JoEuD_-pedifvDTVvb5HJrYHUeSY_nA3YU1v7kF9viRs_b-7sY05RIHEJE_B3nGX1MsccHLaRJ4R6l59npcG2zrpeOt-oLqQw"
+
+
+curl -i http://127.0.0.1:8000/api/v1/test/admin/users \
+  -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzNGE0OGVkYi0wZDg3LTRlZjMtODk1YS00N2M4ODExOWQyYWMiLCJzaWQiOiI3OTM2ODM5Ny04NjJmLTQ0ZTctOWIzNC1lYzMzZDkwMTI0ZWMiLCJhdWQiOiJleGFtcGxlX2NsaWVudCIsInNjb3BlIjoicmVhZCB3cml0ZSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCIsImlhdCI6MTc2NjgwMDg2NywiZXhwIjoxNzY2ODAxNzY3fQ.a0CK5DB0LGXccBBrc64WGCmh_crQ8qh8lJJ3giaAotXJ5ha3KTHh2a1HfURtOSARs8WTmMDYw6ok_qC03VR330N1mLyDbovXw--skFci4NRbNJLDDlg5fLoSYLFdYDwKzbB8MjBLQb71SSZKhLuJ4lHZPaW2nRE2Mb6Mea6-iwiZ-2z1f4sE-iE9q-tznTbtxGqs6JTietzTSdpCx8TkTwFjVd2xH1lf57lt4eqz2cPFV5aWWkJ_2JoEuD_-pedifvDTVvb5HJrYHUeSY_nA3YU1v7kF9viRs_b-7sY05RIHEJE_B3nGX1MsccHLaRJ4R6l59npcG2zrpeOt-oLqQw"
+
+curl -i -X POST http://127.0.0.1:8000/api/v1/oauth/introspect \
+  -d "token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzNGE0OGVkYi0wZDg3LTRlZjMtODk1YS00N2M4ODExOWQyYWMiLCJzaWQiOiI3OTM2ODM5Ny04NjJmLTQ0ZTctOWIzNC1lYzMzZDkwMTI0ZWMiLCJhdWQiOiJleGFtcGxlX2NsaWVudCIsInNjb3BlIjoicmVhZCB3cml0ZSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCIsImlhdCI6MTc2NjgwMDg2NywiZXhwIjoxNzY2ODAxNzY3fQ.a0CK5DB0LGXccBBrc64WGCmh_crQ8qh8lJJ3giaAotXJ5ha3KTHh2a1HfURtOSARs8WTmMDYw6ok_qC03VR330N1mLyDbovXw--skFci4NRbNJLDDlg5fLoSYLFdYDwKzbB8MjBLQb71SSZKhLuJ4lHZPaW2nRE2Mb6Mea6-iwiZ-2z1f4sE-iE9q-tznTbtxGqs6JTietzTSdpCx8TkTwFjVd2xH1lf57lt4eqz2cPFV5aWWkJ_2JoEuD_-pedifvDTVvb5HJrYHUeSY_nA3YU1v7kF9viRs_b-7sY05RIHEJE_B3nGX1MsccHLaRJ4R6l59npcG2zrpeOt-oLqQw"
+
+
+curl -i -X POST http://127.0.0.1:8000/api/v1/oauth/token \
+  -d "grant_type=refresh_token" \
+  -d "client_id=example_client" \
+  -d "refresh_token=cQRTDSzhF3g5-fQElKtqcpRT8083HWtV5-hhWFDIzOT6UDUSUaI61ijFOuN6nqtq"
+
+
+curl -X POST http://127.0.0.1:8000/api/v1/sso/logout -b cookies.txt
