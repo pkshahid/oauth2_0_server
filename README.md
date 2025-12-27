@@ -1,7 +1,7 @@
 ```markdown
 # OAuth 2.0 & SSO Authentication Server
 
-A **production-grade OAuth 2.0 Authorization Server with SSO**, built using **FastAPI, PostgreSQL, and Redis**.  
+A ** production-grade OAuth 2.0 Authorization Server with SSO ** , built using **FastAPI, PostgreSQL, and Redis**.  
 This project implements **industry-standard authentication and authorization flows** similar to Auth0 / Keycloak, with a strong focus on **security, scalability, and correctness**.
 
 ---
