@@ -1,15 +1,14 @@
-```markdown
 # OAuth 2.0 & SSO Authentication Server
 
-A ** production-grade OAuth 2.0 Authorization Server with SSO ** , built using **FastAPI, PostgreSQL, and Redis**.  
-This project implements **industry-standard authentication and authorization flows** similar to Auth0 / Keycloak, with a strong focus on **security, scalability, and correctness**.
+A production-grade OAuth 2.0 Authorization Server with SSO, built using FastAPI, PostgreSQL, and Redis.  
+This project implements industry-standard authentication and authorization flows similar to Auth0 / Keycloak, with a strong focus on security, scalability, and correctness.
 
 ---
 
-## 🚀 Features
+## Features
 
 ### Core Authentication
-- Cookie-based **SSO login**
+- Cookie-based SSO login
 - Secure password hashing (bcrypt)
 - Multi-session support (multi-device login)
 
@@ -23,12 +22,12 @@ This project implements **industry-standard authentication and authorization flo
 ### Token System
 - RSA-signed JWT access tokens
 - Refresh tokens stored securely in PostgreSQL
-- Scope-based authorization (`read`, `write`, `admin`)
-- Session-bound tokens (`sid` claim)
+- Scope-based authorization (read, write, admin)
+- Session-bound tokens (sid claim)
 
 ### Session Management
 - PostgreSQL as source of truth
-- Redis for fast session validation & revocation
+- Redis for fast session validation and revocation
 - Global logout (invalidate all sessions)
 - Instant token invalidation without DB hits
 
@@ -41,58 +40,55 @@ This project implements **industry-standard authentication and authorization flo
 
 ---
 
-## 🧱 Architecture Overview
+## Architecture Overview
 
 ```
-
 Browser / Client
-│
-▼
+      |
+      v
 SSO Login (Cookie)
-│
-▼
+      |
+      v
 OAuth /authorize
-│
-▼
+      |
+      v
 Authorization Code
-│
-▼
+      |
+      v
 OAuth /token
-│
-▼
-JWT Access Token  ──▶ Protected APIs
-│
-▼
+      |
+      v
+JWT Access Token  ---> Protected APIs
+      |
+      v
 Refresh Token
-
 ```
 
 ### Storage Layers
 
-| Layer        | Purpose |
-|-------------|--------|
-| PostgreSQL  | Users, sessions, refresh tokens, audit |
-| Redis       | Session presence & revocation |
-| JWT         | Stateless access tokens |
+| Layer       | Purpose                                |
+|------------|----------------------------------------|
+| PostgreSQL | Users, sessions, refresh tokens, audit |
+| Redis      | Session presence and revocation        |
+| JWT        | Stateless access tokens                |
 
 ---
 
-## 🧩 Tech Stack
+## Tech Stack
 
-- **Python 3.9+**
-- **FastAPI**
-- **PostgreSQL**
-- **Redis**
-- **SQLAlchemy**
-- **PyJWT / python-jose**
-- **Passlib (bcrypt)**
+- Python 3.9+
+- FastAPI
+- PostgreSQL
+- Redis
+- SQLAlchemy
+- PyJWT / python-jose
+- Passlib (bcrypt)
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
-
 app/
 ├── api/
 │   ├── deps.py
@@ -127,16 +123,15 @@ app/
 │   └── password.py
 │
 └── main.py
-
-````
+```
 
 ---
 
-## ⚙️ Environment Variables
+## Environment Variables
 
 Create a `.env` file:
 
-```env
+```
 APP_NAME=OAuth Server
 DEBUG=true
 
@@ -150,27 +145,26 @@ SESSION_COOKIE_SECURE=false
 JWT_ALGORITHM=RS256
 ACCESS_TOKEN_EXPIRE_SECONDS=900
 REFRESH_TOKEN_EXPIRE_DAYS=30
-````
+```
 
 ---
 
-## 🐳 Running with Docker
+## Running with Docker
 
-```bash
+```
 docker compose up -d
 ```
 
 Services:
-
-* PostgreSQL → `localhost:5432`
-* Redis → `localhost:6379`
-* Adminer → `http://localhost:8080`
+- PostgreSQL → localhost:5432
+- Redis → localhost:6379
+- Adminer → http://localhost:8080
 
 ---
 
-## ▶️ Running Locally
+## Running Locally
 
-```bash
+```
 python -m venv venv
 source venv/bin/activate
 
@@ -179,52 +173,48 @@ uvicorn app.main:app --reload
 ```
 
 Swagger UI:
-
 ```
 http://localhost:8000/docs
 ```
 
 ---
 
-## 🔐 Authentication Flow
+## Authentication Flow
 
-### 1️⃣ SSO Login
+### 1. SSO Login
 
-```http
+```
 POST /api/v1/sso/login
 ```
 
 Sets secure session cookie:
-
 ```
 sso_session=<session_id>
 ```
 
 ---
 
-### 2️⃣ OAuth Authorization
+### 2. OAuth Authorization
 
-```http
+```
 GET /api/v1/oauth/authorize
 ```
 
-Returns:
-
+Response:
 ```
-302 Redirect → redirect_uri?code=AUTH_CODE
+302 Redirect -> redirect_uri?code=AUTH_CODE
 ```
 
 ---
 
-### 3️⃣ Token Exchange
+### 3. Token Exchange
 
-```http
+```
 POST /api/v1/oauth/token
 ```
 
 Response:
-
-```json
+```
 {
   "access_token": "JWT",
   "refresh_token": "TOKEN",
@@ -236,21 +226,22 @@ Response:
 
 ---
 
-### 4️⃣ Protected API Call
+### 4. Protected API Call
 
-```http
+```
 Authorization: Bearer <access_token>
 ```
 
 ---
 
-### 5️⃣ UserInfo (OIDC-style)
+### 5. UserInfo (OIDC-style)
 
-```http
+```
 GET /api/v1/userinfo/me
 ```
 
-```json
+Response:
+```
 {
   "sub": "user_id",
   "scope": "read write",
@@ -260,9 +251,9 @@ GET /api/v1/userinfo/me
 
 ---
 
-## 🔄 Refresh Token Flow
+## Refresh Token Flow
 
-```http
+```
 POST /api/v1/oauth/token
 grant_type=refresh_token
 ```
@@ -271,29 +262,29 @@ Returns a new access token.
 
 ---
 
-## 🚪 Logout & Revocation
+## Logout and Revocation
 
 ### Global Logout
 
-```http
+```
 POST /api/v1/logout
 ```
 
 Effect:
-
-* All sessions revoked
-* All refresh tokens revoked
-* All access tokens invalidated via Redis
+- All sessions revoked
+- All refresh tokens revoked
+- All access tokens invalidated via Redis
 
 ---
 
-## 🔍 Token Introspection
+## Token Introspection
 
-```http
+```
 POST /api/v1/oauth/introspect
 ```
 
-```json
+Response:
+```
 {
   "active": true,
   "sub": "user_id",
@@ -304,82 +295,46 @@ POST /api/v1/oauth/introspect
 
 ---
 
-## 🧠 Design Decisions
+## Security Guarantees
 
-### Why Redis?
-
-* Instant token revocation
-* No DB hit on every request
-* Horizontal scalability
-
-### Why Session-Based Revocation?
-
-* JWTs are stateless
-* Session ID (`sid`) gives controlled state
-* Global logout becomes trivial
-
-### Why PostgreSQL for Sessions?
-
-* Auditability
-* Analytics
-* Compliance
+- Replay-safe authorization codes
+- Single-use auth codes
+- Proper 401 vs 403 semantics
+- Secure cookie handling
+- Stateless access tokens
+- Stateful revocation
 
 ---
 
-## 🔒 Security Guarantees
+## Production Checklist
 
-✔ Replay-safe authorization codes
-✔ Single-use auth codes
-✔ Proper 401 vs 403 semantics
-✔ Secure cookie handling
-✔ Stateless access tokens
-✔ Stateful revocation
-
----
-
-## 🧪 Manual Testing (Example)
-
-```bash
-curl -X POST /sso/login
-curl -L /oauth/authorize
-curl -X POST /oauth/token
-curl /userinfo/me -H "Authorization: Bearer TOKEN"
-```
+- HTTPS only
+- Rotate RSA keys (JWKS)
+- Rate limit /oauth/token
+- Enforce audience per client
+- Secure cookies enabled
+- Redis persistence enabled
 
 ---
 
-## 🚀 Production Checklist
+## Standards Compliance
 
-* [ ] HTTPS only
-* [ ] Rotate RSA keys (JWKS)
-* [ ] Rate limit `/oauth/token`
-* [ ] Enforce `aud` per client
-* [ ] Secure cookies enabled
-* [ ] Redis persistence enabled
+- OAuth 2.0 (RFC 6749)
+- Token Revocation (RFC 7009)
+- Token Introspection (RFC 7662)
+- OpenID Connect (partial)
 
 ---
 
-## 📜 Standards Compliance
+## Status
 
-* OAuth 2.0 (RFC 6749)
-* Token Revocation (RFC 7009)
-* Token Introspection (RFC 7662)
-* OpenID Connect (partial)
-
----
-
-## 🏁 Status
-
-✅ Production-ready
-✅ Enterprise-grade
-✅ Horizontally scalable
+- Production-ready
+- Enterprise-grade
+- Horizontally scalable
 
 ---
 
-## 👨‍💻 Author
+## Author
 
-Built with a **senior-level, security-first mindset**.
+Built with a senior-level, security-first mindset.  
 Designed to be extensible, auditable, and safe by default.
-
----
-
